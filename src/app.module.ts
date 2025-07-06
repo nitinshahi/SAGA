@@ -19,13 +19,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        // entities: ['saga/src/user/entities/user.entity.ts'],
+        entities: ['dist/**/*.entity{.ts,.js}'],
+        // entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true, // Set to false in production
         logging: true,
+        migrationsRun: false,
       }),
     }),
     UserModule, 
-    AuthModule
+    AuthModule 
   ],
   controllers: [AppController],
   providers: [AppService],
