@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModule } from './product/product.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { ProductModule } from './product/product.module';
       }),
     }),
     UserModule, 
-    AuthModule, ProductModule 
+    AuthModule, ProductModule, CategoryModule 
   ],
   controllers: [AppController],
   providers: [AppService],
