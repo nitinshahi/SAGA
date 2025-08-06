@@ -1,8 +1,7 @@
 // src/categories/entities/category.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Tree, TreeChildren, TreeParent, JoinColumn } from 'typeorm';
 
 @Entity()
-@Tree('materialized-path') // Or 'nested-set' or 'closure-table'
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,11 +18,12 @@ export class Category {
   @Column({ unique: true })
   slug: string; // For SEO-friendly URLs
 
-  @TreeChildren()
-  children: Category[];
-
-  @TreeParent()
+  @ManyToOne(() => Category, (category) => category.children,{nullable: true,onDelete: 'CASCADE'})
+  @JoinColumn({ name: 'category_id' })
   parent: Category;
+
+  @OneToMany(() => Category, (category) => category.parent)
+  children: Category[];
 
   @Column({ default: true })
   isActive: boolean;
@@ -34,3 +34,4 @@ export class Category {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 }
+
