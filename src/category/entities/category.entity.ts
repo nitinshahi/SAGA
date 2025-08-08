@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Tree, Tre
 
 @Entity()
 export class Category {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column()
@@ -18,8 +18,11 @@ export class Category {
   @Column({ unique: true })
   slug: string; // For SEO-friendly URLs
 
+  @Column({ name: 'parent_id', nullable: true })
+  parentId: string | null;
+
   @ManyToOne(() => Category, (category) => category.children,{nullable: true,onDelete: 'CASCADE'})
-  @JoinColumn({ name: 'category_id' })
+  @JoinColumn({ name: 'parent_id' })
   parent: Category;
 
   @OneToMany(() => Category, (category) => category.parent)

@@ -11,7 +11,7 @@ export class CreateCategoryDto {
   @IsString()
   slug: string;
 
-  @IsUUID()
+  // @IsUUID()
   @IsOptional()
   parentId?: string; // For creating hierarchical relationships
 }

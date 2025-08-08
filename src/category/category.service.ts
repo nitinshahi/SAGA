@@ -4,6 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm/repository/Repository';
 import { InjectRepository } from '@nestjs/typeorm/dist/common/typeorm.decorators';
+import { Equal } from 'typeorm';
 
 @Injectable()
 export class CategoryService {
@@ -14,19 +15,19 @@ export class CategoryService {
   ) {}
   
   async create(createCategoryDto: CreateCategoryDto){
-    const { parentId, ...categoryData } = createCategoryDto;
-    
-    let parent: Category | null = null;
-    if (parentId) {
-      parent = await this.categoryRepository.findOne({ where: { id: parentId } });
-      if (!parent) {
+    let { parentId, ...categoryData } = createCategoryDto;
+
+    if(parentId){
+      const parentCategory = await this.categoryRepository.findOne({ where: { id: parentId } });
+      if (!parentCategory) {
         throw new NotFoundException('Parent category not found');
       }
+      parentId = parentCategory.id;
     }
 
     const category = this.categoryRepository.create({
       ...categoryData,
-      // parent,
+      parentId,
     });
 
     return this.categoryRepository.save(category);
@@ -36,15 +37,25 @@ export class CategoryService {
     return this.categoryRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    const category = await this.categoryRepository.findOneBy({ id });
+    return category;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    return this.categoryRepository.update(id, updateCategoryDto).then(result => {
+      if (result.affected === 0) {
+        throw new NotFoundException(`Category with id ${id} not found`);
+      }
+      return this.findOne(id);
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    const result = await this.categoryRepository.delete(id);
+    if (result.affected === 0) {
+      return { message: `Category with id ${id} not found` };
+    }
+    return { message: `Category with id ${id} removed successfully` };
   }
 }
