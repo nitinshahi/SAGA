@@ -16,7 +16,6 @@ export class CategoryService {
   
   async create(createCategoryDto: CreateCategoryDto){
     let { parentId, ...categoryData } = createCategoryDto;
-
     if(parentId){
       const parentCategory = await this.categoryRepository.findOne({ where: { id: parentId } });
       if (!parentCategory) {

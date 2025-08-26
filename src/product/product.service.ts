@@ -1,24 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm/repository/Repository';
+import { Category } from 'src/category/entities/category.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ProductService {
 
-  constructor(@InjectRepository(Product)
+  constructor(
+    @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>, // Assuming Category is imported correctly
   ) {}
 
   async create(createProductDto: CreateProductDto) {
-    const productData = this.productRepository.create(createProductDto);
-    return productData;
-    await this.productRepository.save(productData);
-    // Assuming the product is saved successfully, you can return a success message or the created product
-    
-    return 'This action adds a new product';
+    const product = this.productRepository.create(createProductDto);
+    // return createProductDto.category_id;
+    let category: Category | null = null;
+
+    if(createProductDto.category_id) {
+      try {
+        category = await this.categoryRepository.findOne({ where: { id: product.category_id } });
+        if (!category) {
+          throw new NotFoundException(`Category with ID ${product.category_id} not found`);
+        }
+      } catch (error) {
+        throw new InternalServerErrorException('Failed to create product');
+      }
+    }
+
+    const savedProduct = await this.productRepository.save(product);
+    return "Product created successfully";
   }
 
   findAll() {

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Category } from 'src/category/entities/category.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 // import { Category } from './category.entity';
 
 @Entity()
@@ -27,12 +28,12 @@ export class Product {
   @Column({ default: true })
   isActive: boolean;
 
-  // @ManyToOne(() => Category, (category) => category.products)
-  // @JoinColumn({ name: 'categoryId' })
-  // category: Category;
+  @ManyToOne(() => Category, (category) => category.products, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
 
-  @Column({ nullable: true })
-  categoryId: string;
+  @Column({ name: 'category_id', nullable: true })
+  category_id?: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

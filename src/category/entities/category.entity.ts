@@ -1,4 +1,5 @@
 // src/categories/entities/category.entity.ts
+import { Product } from 'src/product/entities/product.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Tree, TreeChildren, TreeParent, JoinColumn } from 'typeorm';
 
 @Entity()
@@ -27,6 +28,9 @@ export class Category {
 
   @OneToMany(() => Category, (category) => category.parent)
   children: Category[];
+
+  @OneToMany(() => Product, (product) => product.category, { nullable: true , onDelete: 'SET NULL' })
+  products: Product[];
 
   @Column({ default: true })
   isActive: boolean;
