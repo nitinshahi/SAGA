@@ -30,27 +30,26 @@ export class ProductService {
           throw new NotFoundException(`Category with ID ${product.category_id} not found`);
         }
       } catch (error) {
-        throw new InternalServerErrorException('Failed to create product');
+        throw new NotFoundException(`Category with ID ${product.category_id} not found`);
       }
     }
-
     const savedProduct = await this.productRepository.save(product);
-    return "Product created successfully";
+    return savedProduct;
   }
 
   findAll() {
-    return `This action returns all product`;
+    return this.productRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  findOne(id: string) {
+    return this.productRepository.findOneBy( { id });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  update(id: string, updateProductDto: UpdateProductDto) {
+    return this.productRepository.update(id, updateProductDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  remove(id: string) {
+    return this.productRepository.delete(id);
   }
 }
