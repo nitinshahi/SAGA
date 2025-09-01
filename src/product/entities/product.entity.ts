@@ -1,5 +1,6 @@
 import { CartItem } from 'src/cart/entities/cart-item.entity';
 import { Category } from 'src/category/entities/category.entity';
+import { OrderItem } from 'src/order/entities/order-item.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 // import { Category } from './category.entity';
 
@@ -38,6 +39,9 @@ export class Product {
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
   cartItems: CartItem[];
+
+  @OneToMany(() => OrderItem, orderItem => orderItem.product)
+  orderItems: OrderItem[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

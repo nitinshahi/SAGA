@@ -58,20 +58,13 @@ export class CartService {
     return this.getOrCreateCart(userId);
   }
 
-  create(createCartDto: CreateCartDto) {
-    return 'This action adds a new cart';
-  }
-
-  findAll() {
-    return `This action returns all cart`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
-  }
-
-  update(id: number, updateCartDto: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
+  async clearCart(userId: number) {
+    const cart = await this.getOrCreateCart(userId);
+    await this.itemRepository.delete({ cart: { id: cart.id } });
+    return this.cartRepository.findOne({
+      where: { id: cart.id },
+      relations: ['items', 'items.product'],
+    });
   }
 
   async removeItem(userId: number, itemId: number) {
