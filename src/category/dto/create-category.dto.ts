@@ -13,5 +13,5 @@ export class CreateCategoryDto {
 
   // @IsUUID()
   @IsOptional()
-  parentId?: string; // For creating hierarchical relationships
+  parentId?: number; // For creating hierarchical relationships
 }

@@ -5,7 +5,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Tree, Tre
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   name: string;
@@ -20,7 +20,7 @@ export class Category {
   slug: string; // For SEO-friendly URLs
 
   @Column({ name: 'parent_id', nullable: true })
-  parentId: string | null;
+  parentId: number | null;
 
   @ManyToOne(() => Category, (category) => category.children,{nullable: true,onDelete: 'CASCADE'})
   @JoinColumn({ name: 'parent_id' })

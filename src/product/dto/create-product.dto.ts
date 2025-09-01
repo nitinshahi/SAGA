@@ -23,6 +23,6 @@ export class CreateProductDto {
     isActive: boolean;
 
     @IsOptional()
-    category_id?: string;
+    category_id?: number;
 
 }

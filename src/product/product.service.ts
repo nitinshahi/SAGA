@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm/repository/Repository';
 import { Category } from 'src/category/entities/category.entity';
-import { In } from 'typeorm';
 
 @Injectable()
 export class ProductService {
@@ -25,7 +24,7 @@ export class ProductService {
 
     if(createProductDto.category_id) {
       try {
-        category = await this.categoryRepository.findOne({ where: { id: product.category_id } });
+        category = await this.categoryRepository.findOne({ where: { id: Number(product.category_id) } });
         if (!category) {
           throw new NotFoundException(`Category with ID ${product.category_id} not found`);
         }
@@ -41,15 +40,15 @@ export class ProductService {
     return this.productRepository.find();
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.productRepository.findOneBy( { id });
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
+  update(id: number, updateProductDto: UpdateProductDto) {
     return this.productRepository.update(id, updateProductDto);
   }
 
-  remove(id: string) {
+  remove(id: number) {
     return this.productRepository.delete(id);
   }
 }

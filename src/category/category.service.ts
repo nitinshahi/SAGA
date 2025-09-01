@@ -17,7 +17,7 @@ export class CategoryService {
   async create(createCategoryDto: CreateCategoryDto){
     let { parentId, ...categoryData } = createCategoryDto;
     if(parentId){
-      const parentCategory = await this.categoryRepository.findOne({ where: { id: parentId } });
+      const parentCategory = await this.categoryRepository.findOne({ where: { id: Number(parentId) } });
       if (!parentCategory) {
         throw new NotFoundException('Parent category not found');
       }
@@ -36,12 +36,12 @@ export class CategoryService {
     return this.categoryRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const category = await this.categoryRepository.findOneBy({ id });
     return category;
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
+  update(id: number, updateCategoryDto: UpdateCategoryDto) {
     return this.categoryRepository.update(id, updateCategoryDto).then(result => {
       if (result.affected === 0) {
         throw new NotFoundException(`Category with id ${id} not found`);

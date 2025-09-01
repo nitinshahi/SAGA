@@ -1,3 +1,4 @@
+import { CartItem } from 'src/cart/entities/cart-item.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 // import { Category } from './category.entity';
@@ -5,7 +6,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMan
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   name: string;
@@ -33,7 +34,10 @@ export class Product {
   category: Category;
 
   @Column({ name: 'category_id', nullable: true })
-  category_id?: string;
+  category_id?: number;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  cartItems: CartItem[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
