@@ -17,8 +17,8 @@ export class ProductService {
     private categoryRepository: Repository<Category>, // Assuming Category is imported correctly
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
-    const product = this.productRepository.create(createProductDto);
+  async create(createProductDto: CreateProductDto, imagePaths: string[]) {
+    const product = this.productRepository.create({ ...createProductDto, imageUrls: imagePaths });
     // return createProductDto.category_id;
     let category: Category | null = null;
 

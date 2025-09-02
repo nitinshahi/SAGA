@@ -12,10 +12,13 @@ export class Product {
   @Column()
   name: string;
 
+  @Column({ type: 'simple-array', nullable: true })
+  imageUrls: string[];
+
   @Column('text')
   description: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   price: number;
 
   @Column()

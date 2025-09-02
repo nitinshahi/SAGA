@@ -13,8 +13,8 @@ export class Category {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ nullable: true })
-  imageUrl: string;
+  @Column({ type: 'simple-array', nullable: true })
+  imageUrl: string[];
 
   @Column({ unique: true })
   slug: string; // For SEO-friendly URLs
