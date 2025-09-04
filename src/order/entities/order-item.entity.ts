@@ -10,7 +10,7 @@ export class OrderItem {
     @ManyToOne(() => Order, order => order.items)
     order: Order;
 
-    @ManyToOne(() => Product, product => product.orderItems)
+    @ManyToOne(() => Product, product => product.orderItems, { onDelete: 'CASCADE' })
     product: Product;
 
     @Column()

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, ParseIntPipe, BadRequestException } from '@nestjs/common';
 import { Express } from 'express';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -6,6 +6,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { multerOptions } from 'src/multer.config';
+import { UpdateProductImagesDto } from './dto/update-product-images.dto';
 
 @Controller('product')
 export class ProductController {
@@ -30,7 +32,21 @@ export class ProductController {
   ) {
     const imagePaths = files?.images?.map((file) => `/uploads/${file.filename}`) || [];
     return this.productService.create(createProductDto, imagePaths);
-  } 
+  }
+
+  @Post(':id/images')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }], multerOptions))
+  async uploadImages(
+    @Param('id', new ParseIntPipe()) productId: number,
+    @UploadedFiles() files: { images?: Express.Multer.File[] },
+    @Body() updateDto: UpdateProductImagesDto,
+  ) {
+    if(!files || files?.images?.length === 0) {
+      throw new BadRequestException({ message: 'No images uploaded' });
+    }
+    const imagePaths = files?.images?.map((file) => `/uploads/${file.filename}`) || [];
+    return this.productService.updateProductImages(productId, updateDto, imagePaths);
+  }
 
   @Get()
   findAll() {
@@ -39,7 +55,7 @@ export class ProductController {
 
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.productService.findOne(+id);
+    return this.productService.findOne(id);
   }
 
   @Patch(':id')

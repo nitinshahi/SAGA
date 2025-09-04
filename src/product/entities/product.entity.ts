@@ -40,10 +40,10 @@ export class Product {
   @Column({ name: 'category_id', nullable: true })
   category_id?: number;
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product, { onDelete: 'CASCADE' })
   cartItems: CartItem[];
 
-  @OneToMany(() => OrderItem, orderItem => orderItem.product)
+  @OneToMany(() => OrderItem, orderItem => orderItem.product, { onDelete: 'CASCADE' })
   orderItems: OrderItem[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

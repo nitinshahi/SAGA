@@ -14,19 +14,24 @@ export class CategoryService {
     private categoryRepository: Repository<Category>,
   ) {}
   
-  async create(createCategoryDto: CreateCategoryDto){
+  async create(createCategoryDto: CreateCategoryDto, imagePaths: string[]){
     let { parentId, ...categoryData } = createCategoryDto;
     if(parentId){
-      const parentCategory = await this.categoryRepository.findOne({ where: { id: Number(parentId) } });
-      if (!parentCategory) {
+      try {
+        const parentCategory = await this.categoryRepository.findOne({ where: { id: Number(parentId) } });
+        if (!parentCategory) {
+          throw new NotFoundException('Parent category not found');
+        }
+        parentId = parentCategory.id;
+      } catch (error) {
         throw new NotFoundException('Parent category not found');
       }
-      parentId = parentCategory.id;
     }
 
     const category = this.categoryRepository.create({
       ...categoryData,
       parentId,
+      imageUrls: imagePaths
     });
 
     return this.categoryRepository.save(category);

@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm/repository/Repository';
 import { Category } from 'src/category/entities/category.entity';
+import { UpdateMode, UpdateProductImagesDto } from './dto/update-product-images.dto';
+import { deleteFile } from 'src/utils/file.utils';
 
 @Injectable()
 export class ProductService {
@@ -36,12 +38,22 @@ export class ProductService {
     return savedProduct;
   }
 
-  findAll() {
-    return this.productRepository.find();
+  async findAll() {
+    try {
+      const products = await this.productRepository.find();
+      return products; 
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching products');
+    }
   }
 
-  findOne(id: number) {
-    return this.productRepository.findOneBy( { id });
+  async findOne(id: number) {
+    try {
+      const product = await this.productRepository.findOneBy({ id });
+      return product;
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching product');
+    }
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
@@ -51,4 +63,22 @@ export class ProductService {
   remove(id: number) {
     return this.productRepository.delete(id);
   }
-}
+
+  async updateProductImages(productId: number, updateDto: UpdateProductImagesDto, newImagePaths: string[]) {
+    const product = await this.productRepository.findOneBy({ id: productId });
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${productId} not found`);
+    }
+    // Update product images
+    if (updateDto.mode === UpdateMode.REPLACE) {
+      // Delete old images from filesystem
+      // const imagesToDelete = product.imageUrls;
+  
+      // imagesToDelete.forEach((path) => deleteFile(path));
+      product.imageUrls = newImagePaths;
+    } else if (updateDto.mode === UpdateMode.ADD) {
+      product.imageUrls = [...product.imageUrls, ...newImagePaths];
+    }
+    return this.productRepository.save(product);
+    }
+  }

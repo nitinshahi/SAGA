@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateProductDto {
 
@@ -19,8 +19,16 @@ export class CreateProductDto {
     @IsOptional()
     stockQuantity: number;
 
+    @IsOptional()
+    @IsArray()
+    images: string[];
+
+    @IsNumber()
+    @IsOptional()
     reorderThreshold: number;
 
+    @IsOptional()
+    @IsBoolean()
     isActive: boolean;
 
     @IsOptional()

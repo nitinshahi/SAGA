@@ -14,7 +14,7 @@ export class Category {
   description: string;
 
   @Column({ type: 'simple-array', nullable: true })
-  imageUrl: string[];
+  imageUrls: string[];
 
   @Column({ unique: true })
   slug: string; // For SEO-friendly URLs
